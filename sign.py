@@ -5,7 +5,7 @@ CA = {}
 
 def rsaEncrypt(str,privk):
 
-    content = str.encode('utf-8')
+    content = str.encode()
 
     crypto = rsa.sign(content,privk,'SHA-1')
     return crypto
@@ -34,9 +34,10 @@ class User:
 
     def sign(self,str):
         self.crypto = rsaEncrypt(hashlib.md5((str + self.name).encode()).hexdigest(),self.privkey)
-        return self.crypto
+        return self.crypto.decode('unicode_escape')
 
     def check(self,str,user,crypto):
+        crypto=bytes(crypto,'latin-1')
         if user.name not in CA:
             print("k ton tai")
         else:
@@ -52,7 +53,8 @@ user2 = User('user2')
 user3 = User('user3')
 print("{0} {1} ".format(user1.name,message))
 miwen = user1.sign(message)
+print(miwen)
+#a=miwen.decode('unicode_escape')
+#b=bytes(a,'latin-1')
 
 user2.check(message,user1,miwen)
-
-user3.check(message,user2,miwen)

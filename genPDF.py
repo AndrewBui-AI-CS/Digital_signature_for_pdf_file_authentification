@@ -13,6 +13,7 @@ from datetime import datetime
 from pdfrw import PdfReader
 from pdfrw.buildxobj import pagexobj
 from pdfrw.toreportlab import makerl
+from sign import *
 
 
 class WorkerSignals(QObject):
@@ -45,9 +46,9 @@ class Generator(QRunnable):
             p.setPageSize((400, 400))
 
             content= self.data['content'].replace('\n', ' ')
-            
             #content sau nay phai ghep voi chu ky RSA
-            qr_data = content
+            user=User(self.data['customer'])
+            qr_data = content+'#'+self.data['customer']+'#'+user.sign(content)
 
             # Generate qr code
             qrw = QrCodeWidget(qr_data) 
