@@ -18,7 +18,8 @@ def getQRDATA(png):
 
     print("qr-code.png decode:" )
     
-    return data[0][0]
+    return data[0][0].decode('utf-8')
 
 genQR('message', 'testQR.png')
 print(getQRDATA('testQR.png'))
+print(type(getQRDATA('testQR.png')))

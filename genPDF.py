@@ -13,6 +13,7 @@ from datetime import datetime
 from pdfrw import PdfReader
 from pdfrw.buildxobj import pagexobj
 from pdfrw.toreportlab import makerl
+
 from sign import *
 
 
@@ -47,9 +48,10 @@ class Generator(QRunnable):
 
             content= self.data['content'].replace('\n', ' ')
             #content sau nay phai ghep voi chu ky RSA
-            user=User(self.data['customer'])
-            qr_data = content+'#'+self.data['customer']+'#'+user.sign(content)
-
+            sk, pk = generateKey()
+            signature_bytes = sign_msg(bytes(content, 'utf-8'), sk)
+            signature = binascii.hexlify(signature_bytes).decode('utf-8')
+            qr_data = content+'#'+self.data['customer']+'#'+signature
             # Generate qr code
             qrw = QrCodeWidget(qr_data) 
 
@@ -99,6 +101,7 @@ class Generator(QRunnable):
 
         except Exception as e:
             self.signals.error.emit(str(e))
+            print('error')
             return
 
         self.signals.file_saved_as.emit(self.data['fileName'])
@@ -148,7 +151,7 @@ class Window(QWidget):
             QMessageBox.information(self, "Finished", "PDF has been generated")
 
 
-app = QApplication([])
-w = Window()
-w.show()
-app.exec_()
+# app = QApplication([])
+# w = Window()
+# w.show()
+# app.exec_()
