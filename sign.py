@@ -95,8 +95,10 @@ def verify_msg(message, pubkey, sig):
     try:
         verifier.verify(hash, sig)
         print("Signature is valid.")
+        return True
     except:
         print("Signature is invalid.")
+        return False
 
 
 # sk, pk = generateKey()

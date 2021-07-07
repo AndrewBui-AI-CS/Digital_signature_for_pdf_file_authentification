@@ -50,7 +50,7 @@ class Generator(QRunnable):
             sk, pk = generateKey()
             signature_bytes = sign_msg(bytes(content, 'utf-8'), sk)
             signature = binascii.hexlify(signature_bytes).decode('utf-8')
-            qr_data = content+'#'+self.data['customer']+'#'+signature
+            qr_data = content+'#'+self.data['customer']+'#'+signature+'#' + str(pk)
             # Generate qr code
             qrw = QrCodeWidget(qr_data) 
 

@@ -13,7 +13,7 @@ def genPDF(textBox, author, fileName):
             'customer': author,
             'content': textBox
         }
-    pdf=Generater(data)
+    pdf=Generator(data)
     pdf.gen()
 
 
