@@ -40,20 +40,21 @@ class Generator(QRunnable):
         self.data = data
         self.signals = WorkerSignals()
 
-    def gen(self, key):
+    def gen(self):
         try:
             p = Canvas(self.data['fileName'])
             p.setPageSize((400, 400))
 
-            content= self.data['content'].replace('\n', ' ')
+            content= self.data['content']
             #content sau nay phai ghep voi chu ky RSA
             #sk, pk = generateKey()
             sk=self.data['sk']
             pk=self.data['pk']
             signature_bytes = sign_msg(bytes(content, 'utf-8'), sk)
             signature = binascii.hexlify(signature_bytes).decode('utf-8')
-            qr_data = content+'#'+self.data['customer']+'#'+signature+'#' + str(pk)
+            qr_data = content+'#'+signature
             # Generate qr code
+            print(qr_data)
             qrw = QrCodeWidget(qr_data) 
 
             d = Drawing(10,10) 

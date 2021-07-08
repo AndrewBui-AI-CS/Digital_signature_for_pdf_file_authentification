@@ -1,3 +1,4 @@
+from QrScan import generateCamera
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
@@ -7,24 +8,33 @@ from genPDF2 import *
 from sign import *
 
 # from genPDF import Window
-
+import json 
+from QrScan import generateCamera
 def genPDF(textBox, author, fileName):
     global pk,sk
     try:
         if sk=='' or pk=='':
             sk, pk= generateKey()
-            f=open('key.txt', 'w')
-            f.writelines (str(sk)+'\n'+str(pk)) 
+            saving_data = {}
+            saving_data['author_name'] = author
+            saving_data['public_key'] = str(pk).split()[-1]
+            saving_data['private_key'] = str(sk).split()[-1]
+
+            with open('key.txt', 'a+') as outfile:
+                json.dump(saving_data, outfile, indent=4)
+            # f=open('key.txt', 'a+')
+            # f.writelines (str(sk)+'\n'+str(pk)+'\n') 
             messagebox.showinfo("Tạo tệp", "Đã tạo tệp key.txt")        
         
-        print(textBox+author+fileName)
+        # print(textBox+author+fileName)
         data = {
                 'sk': sk,
-                'pk':pk,
+                'pk': pk,
                 'fileName': fileName,
                 'customer': author,
                 'content': textBox
             }
+        # print(data)
         pdf=Generator(data)
         pdf.gen()
         messagebox.showinfo("Tạo tệp", "Đã tạo tệp PDF thành công")
@@ -56,6 +66,7 @@ def addGenerateTab():
 
     encodeButton = Button(tab1, text="Tạo PDF", command=lambda: genPDF(str(textBox.get("1.0", END)), str(author.get()),str(fileName.get())))
     encodeButton.grid(row=8, sticky="ew", padx=(250,250), pady=30)
+
 def load_key():
     global keyFile, sk, pk
     keyFile = filedialog.askopenfilename()
@@ -88,15 +99,16 @@ def load_file(checkButton):
 def check():
 #pdf-->ảnh, sau đó dùng opencv detect QR từ ảnh, sau đó check
     pass
-def cameraCheck():
+def cameraCheck(pk):
     print('đã mở cam')
+    generateCamera(pk)
 
-def addCheckTab():
+def addCheckTab(pk):
     tab2.columnconfigure(0, weight=1)
     textBox = Text(tab2, height=5, width=20)
     textBox.grid(row=3, sticky="ew", padx=(50,50), pady=20)
     
-    cameraButton = Button(tab2, text="Mở camera", command=lambda: cameraCheck())
+    cameraButton = Button(tab2, text="Mở camera", command=lambda: cameraCheck(pk))
     cameraButton.grid(row=4, sticky="ew", padx=(250,250), pady=10)
 
     uploadButton = Button(tab2, text="Chọn tệp", command=lambda: load_file(checkButton))
@@ -133,7 +145,7 @@ if __name__ == "__main__":
     
 
     addGenerateTab()
-    addCheckTab()
+    addCheckTab(pk)
 
     tabControl.pack(expand=1,fill='both')
     root.mainloop()

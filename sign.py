@@ -70,7 +70,9 @@
 
 # user2.check(message,user1,miwen)
 
+from json import encoder
 from Crypto.PublicKey import RSA
+from numpy.testing._private.utils import decorate_methods
 from Crypto.Signature.pkcs1_15 import PKCS115_SigScheme
 from Crypto.Hash import SHA256
 import binascii
@@ -102,8 +104,12 @@ def verify_msg(message, pubkey, sig):
 
 
 # sk, pk = generateKey()
-# msg = b'Message for RSA signing'
+# msg = b'buiviethoang'
 # signature = sign_msg(msg, sk)
 # sig_modify = binascii.hexlify(signature).decode('utf-8')
+# sig2 = binascii.unhexlify(sig_modify)
+# print(signature)
 # print(sig_modify)
-# verify_msg(msg, pk, signature)
+# print(sig2)
+# print(binascii.unhexlify(bytes(sig_modify, 'utf-8')))
+# verify_msg(bytes(mess, 'utf-8'), pk, bytes(sig_modify, 'utf-8'))
