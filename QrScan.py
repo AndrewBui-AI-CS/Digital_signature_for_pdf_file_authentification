@@ -5,7 +5,8 @@ from pyzbar.pyzbar import decode
 
 from sign import *
 
-def generateCamera(pk):
+def generateCamera():
+    pk='' #lay tu ma qr ra
     cap = cv2.VideoCapture(0)
     cap.set(3,640)
     cap.set(4,480)

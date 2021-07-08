@@ -10,6 +10,7 @@ from sign import *
 # from genPDF import Window
 import json 
 from QrScan import generateCamera
+
 def genPDF(textBox, author, fileName):
     global pk,sk
     try:
@@ -47,17 +48,17 @@ def addGenerateTab():
     tab1.columnconfigure(0, weight=1)
 
     label1 = Label(tab1, text="Người viết")
-    label1.grid(row=1, pady=10)
+    label1.grid(row=2, padx=(0,375), pady=20)
     author = Entry(tab1, width=50, borderwidth=3)
-    author.grid(row=2, pady=0)
+    author.grid(row=2, pady=20)
 
     label2 = Label(tab1, text="Tên tệp")
-    label2.grid(row=3, pady=10)
+    label2.grid(row=4, pady=20, padx=(0,360))
     fileName = Entry(tab1, width=50, borderwidth=3)
-    fileName.grid(row=4, pady=0)
+    fileName.grid(row=4, pady=20)
     
     uploadButton = Button(tab1, text="Chọn tệp", command=lambda: load_key())
-    uploadButton.grid(row=5, sticky="ew", padx=(250,250), pady=10)
+    uploadButton.grid(row=5,sticky="ew", padx=(250,250), pady=10)
 
     keyFileLabel.grid(row=6,pady=5)
 
@@ -99,16 +100,17 @@ def load_file(checkButton):
 def check():
 #pdf-->ảnh, sau đó dùng opencv detect QR từ ảnh, sau đó check
     pass
-def cameraCheck(pk):
+def cameraCheck():
     print('đã mở cam')
-    generateCamera(pk)
+    generateCamera()
 
-def addCheckTab(pk):
+def addCheckTab():
+    global pk
     tab2.columnconfigure(0, weight=1)
     textBox = Text(tab2, height=5, width=20)
     textBox.grid(row=3, sticky="ew", padx=(50,50), pady=20)
     
-    cameraButton = Button(tab2, text="Mở camera", command=lambda: cameraCheck(pk))
+    cameraButton = Button(tab2, text="Mở camera", command=lambda: cameraCheck())
     cameraButton.grid(row=4, sticky="ew", padx=(250,250), pady=10)
 
     uploadButton = Button(tab2, text="Chọn tệp", command=lambda: load_file(checkButton))
@@ -137,15 +139,21 @@ if __name__ == "__main__":
     tabControl.add(tab1, text="  Tạo QR-PDF ")
     tabControl.add(tab2, text="  Xác thực ")
 
+    background_image = PhotoImage(file='./image/background/bg8.png')
+    bg1 = Label(tab1, image=background_image)
+    bg1.place(x=0, y=0, relwidth=1, relheight=1)
+    
+    bg2 = Label(tab2, image=background_image)
+    bg2.place(x=0, y=0, relwidth=1, relheight=1)
+    
     keyFileLabel = Label(tab1, text="" )
     fileNameLabel = Label(tab2, text="" )
     
     sk=''
     pk=''
     
-
     addGenerateTab()
-    addCheckTab(pk)
+    addCheckTab()
 
     tabControl.pack(expand=1,fill='both')
     root.mainloop()
