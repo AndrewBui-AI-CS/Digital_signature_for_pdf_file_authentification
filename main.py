@@ -11,16 +11,23 @@ from sign import *
 import json 
 from QrScan import generateCamera
 
+
 def genPDF(textBox, author, fileName):
     global pk,sk
     try:
         if sk=='' or pk=='':
-            sk, pk= generateKey()
+            sk, pk = generateKey()
+            f = open('public.pem', 'wb')
+            f.write(pk.publickey().exportKey('PEM'))
+            f.close()
+
             saving_data = {}
             saving_data['author_name'] = author
             saving_data['public_key'] = str(pk).split()[-1]
             saving_data['private_key'] = str(sk).split()[-1]
 
+
+                
             with open('key.txt', 'a+') as outfile:
                 json.dump(saving_data, outfile, indent=4)
             # f=open('key.txt', 'a+')

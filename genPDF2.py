@@ -107,4 +107,4 @@ class Generator(QRunnable):
             return
 
         self.signals.file_saved_as.emit(self.data['fileName'])
-        print('ok2')
+        # print('ok2')

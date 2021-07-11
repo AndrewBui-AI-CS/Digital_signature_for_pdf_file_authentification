@@ -34,6 +34,8 @@
 #         self.crypto = ''
 
 #         (self.pubkey,self.privkey) = rsa.newkeys(512)
+#         print(type(self.pubkey))
+
 #         applyKey(self.name,self.pubkey)
 
 #     def sign(self,str):
@@ -52,7 +54,7 @@
 #             else:
 #                 print("khong xac minh")
 
-# message = 'test123'
+# message = b'test123'
 # user1 = User('user1')
 # demo = user1.sign(message)
 # print(type(demo))
@@ -65,12 +67,13 @@
 # miwen = user1.sign(message)
 # print(miwen)
 # print(type(miwen))
-#a=miwen.decode('unicode_escape')
-#b=bytes(a,'latin-1')
+# a=miwen.decode('unicode_escape')
+# b=bytes(a,'latin-1')
 
 # user2.check(message,user1,miwen)
 
 from json import encoder
+from tkinter.constants import S
 from Crypto.PublicKey import RSA
 from numpy.testing._private.utils import decorate_methods
 from Crypto.Signature.pkcs1_15 import PKCS115_SigScheme
@@ -103,8 +106,19 @@ def verify_msg(message, pubkey, sig):
         return False
 
 
-# sk, pk = generateKey()
+
+sk, pk = generateKey()
+# f = open('public.pem', 'wb')
+# f.write(pk.publickey().exportKey('PEM'))
+# f.close()
+
 # msg = b'buiviethoang'
+# mess = 'buiviethoang'
+# #Read key from file
+# f = open('public.pem', 'rb')
+# key = RSA.importKey(f.read())
+# print(key)
+# print(type(key))
 # signature = sign_msg(msg, sk)
 # sig_modify = binascii.hexlify(signature).decode('utf-8')
 # sig2 = binascii.unhexlify(sig_modify)
@@ -112,4 +126,5 @@ def verify_msg(message, pubkey, sig):
 # print(sig_modify)
 # print(sig2)
 # print(binascii.unhexlify(bytes(sig_modify, 'utf-8')))
-# verify_msg(bytes(mess, 'utf-8'), pk, bytes(sig_modify, 'utf-8'))
+# # verify_msg(bytes(mess, 'utf-8'), pk, bytes(sig_modify, 'utf-8'))
+# verify_msg(bytes(mess, 'utf-8'), key, sig2)

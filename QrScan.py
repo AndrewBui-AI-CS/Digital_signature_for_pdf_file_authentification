@@ -1,4 +1,3 @@
-from sign import sign_msg
 import cv2
 import numpy as np
 from pyzbar.pyzbar import decode
@@ -6,7 +5,7 @@ from pyzbar.pyzbar import decode
 from sign import *
 
 def generateCamera():
-    pk='' #lay tu ma qr ra
+    # pk='' #lay tu ma qr ra
     cap = cv2.VideoCapture(0)
     cap.set(3,640)
     cap.set(4,480)
@@ -14,12 +13,18 @@ def generateCamera():
         success, img = cap.read()
         for barcode in decode(img):
             myData = barcode.data.decode('utf-8')
-            print(myData)
+            # print(myData)
+            # print('next')
             data_list = myData.split('#')
-            print(data_list)
-            print(binascii.unhexlify(bytes(data_list[1], 'utf-8')))
-            print(data_list[0])
-            if verify_msg(bytes(data_list[0], 'utf-8'), pk, binascii.unhexlify(bytes(data_list[1], 'utf-8'))):
+            # print(data_list)
+            # print(binascii.unhexlify(data_list[1]))
+            # print(data_list[0])
+
+            #Read key from file
+            f = open('public.pem', 'rb')
+            publickey = RSA.importKey(f.read())
+
+            if verify_msg(bytes(data_list[0], 'utf-8'), publickey, binascii.unhexlify(data_list[1])):
                 myOutput = 'Authorized'
                 myColor = (0,255,0)
             else:
