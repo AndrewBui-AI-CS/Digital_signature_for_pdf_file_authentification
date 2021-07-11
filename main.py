@@ -1,4 +1,4 @@
-from QrScan import generateCamera
+#from QrScan import generateCamera
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
@@ -11,77 +11,88 @@ from sign import *
 import json 
 from QrScan import generateCamera
 
-def genPDF(textBox, author, fileName):
-    global pk,sk
-    try:
-        if sk=='' or pk=='':
-            sk, pk= generateKey()
-            saving_data = {}
-            saving_data['author_name'] = author
-            saving_data['public_key'] = str(pk).split()[-1]
-            saving_data['private_key'] = str(sk).split()[-1]
 
-            with open('key.txt', 'a+') as outfile:
-                json.dump(saving_data, outfile, indent=4)
-            # f=open('key.txt', 'a+')
-            # f.writelines (str(sk)+'\n'+str(pk)+'\n') 
-            messagebox.showinfo("Tạo tệp", "Đã tạo tệp key.txt")        
+def genPDF(textBox, words, author, fileName):
+    global pk,sk, choose
+    try:
+        if choose==0:
+            sk, pk = generateKey()
+            f = open('public_key_'+author+'.pem', 'wb')
+            f.write(pk.publickey().exportKey('PEM'))
+            f.close()
+
+            f = open('private_key_'+author+'.pem', 'wb')
+            f.write(sk.exportKey('PEM'))
+            f.close()
+
+            messagebox.showinfo("Tạo tệp", "Đã tạo tệp key")        
         
-        # print(textBox+author+fileName)
         data = {
                 'sk': sk,
-                'pk': pk,
                 'fileName': fileName,
                 'customer': author,
-                'content': textBox
+                'content': textBox,
+                'words': words
             }
         # print(data)
         pdf=Generator(data)
         pdf.gen()
         messagebox.showinfo("Tạo tệp", "Đã tạo tệp PDF thành công")
     except:
-        showerror("Lỗi", "Tạo tệp gặp lỗi")
+        messagebox.showinfo("Lỗi", "Tạo tệp gặp lỗi")
         
 
 
 def addGenerateTab():
     tab1.columnconfigure(0, weight=1)
 
-    label1 = Label(tab1, text="Người viết")
-    label1.grid(row=2, padx=(0,375), pady=20)
+    label1 = Label(tab1, text="Người viết",fg='#e6f406', bg='#b172ec', font='bold')
+    label1.grid(row=0, pady=(20,0), padx=(0,220))
     author = Entry(tab1, width=50, borderwidth=3)
-    author.grid(row=2, pady=20)
+    author.grid(row=1, pady=5)
 
-    label2 = Label(tab1, text="Tên tệp")
-    label2.grid(row=4, pady=20, padx=(0,360))
+    label2 = Label(tab1, text="Tên tệp",fg='#ff0', bg='#b172ec',font='bold')
+    label2.grid(row=2, pady=(20,0),padx=(0,220))
     fileName = Entry(tab1, width=50, borderwidth=3)
-    fileName.grid(row=4, pady=20)
+    fileName.grid(row=4, pady=5)
     
-    uploadButton = Button(tab1, text="Chọn tệp", command=lambda: load_key())
-    uploadButton.grid(row=5,sticky="ew", padx=(250,250), pady=10)
+    uploadButton = Button(tab1, text="Chọn tệp khóa bí mật nếu có", command=lambda: load_key(),fg='blue', bg='#8cd56c',font='bold')
+    uploadButton.grid(row=5,sticky="ew", padx=(240,240), pady=20)
 
     keyFileLabel.grid(row=6,pady=5)
 
-    textBox = Text(tab1, height=15, width=20)
-    textBox.grid(row=7, columnspan=3, sticky="ew", pady=20, padx=(50,50))
+    label3 = Label(tab1, text="Viết văn bản",fg='#ff0', bg='#a053e7',font='bold')
+    label3.grid(row=7, pady=(20,0),padx=(0,1200))
 
-    encodeButton = Button(tab1, text="Tạo PDF", command=lambda: genPDF(str(textBox.get("1.0", END)), str(author.get()),str(fileName.get())))
-    encodeButton.grid(row=8, sticky="ew", padx=(250,250), pady=30)
+    textBox = Text(tab1, height=5, width=20)
+    textBox.grid(row=10, columnspan=3, sticky="ew", pady=5, padx=(50,50))
+
+    label4 = Label(tab1, text="Viết dữ liệu cần ký",fg='#ff0', bg='#a053e7',font='bold')
+    label4.grid(row=9, pady=(20,0),padx=(0,1200))
+
+    textBox2 = Text(tab1, height=10, width=20)
+    textBox2.grid(row=8, columnspan=3, sticky="ew", pady=5, padx=(50,50))
+
+    encodeButton = Button(tab1, text="Tạo PDF", command=lambda: genPDF(str(textBox.get("1.0", END)),str(textBox2.get("1.0", END)), str(author.get()),str(fileName.get())),fg='blue', bg='#8cd56c',font= ('bold',20))
+    encodeButton.grid(row=11, sticky="ew", padx=(250,250), pady=30)
 
 def load_key():
-    global keyFile, sk, pk
+    global keyFile, sk, pk, choose
     keyFile = filedialog.askopenfilename()
     if keyFile:
         try:
             print(str(keyFile))
-            f=open(keyFile, 'r')
-            sk=f.readline()
-            pk=f.readline()
+            f = open(keyFile, 'rb')
+            sk = RSA.importKey(f.read())
+            choose=1
+            f.close()
+
+            print(sk)
             
             keyFileLabel['text'] = 'Tệp được chọn: ' + str(keyFile)  
             
         except:            
-            showerror("Mở tệp", "Lỗi đọc tệp\n'%s'" % fname)
+            messagebox.showinfo("Mở tệp", "Lỗi đọc tệp\n'%s'" % fname)
         return
     
 def load_file(checkButton):
@@ -94,38 +105,32 @@ def load_file(checkButton):
             checkButton['state']= 'normal'         
 
         except:            
-            showerror("Mở tệp", "Lỗi đọc tệp\n'%s'" % fname)
+            messagebox.showinfo("Mở tệp", "Lỗi đọc tệp\n'%s'" % fname)
         return
 
 def check():
 #pdf-->ảnh, sau đó dùng opencv detect QR từ ảnh, sau đó check
     pass
 def cameraCheck():
-    print('đã mở cam')
     generateCamera()
 
 def addCheckTab():
     global pk
     tab2.columnconfigure(0, weight=1)
-    textBox = Text(tab2, height=5, width=20)
-    textBox.grid(row=3, sticky="ew", padx=(50,50), pady=20)
-    
-    cameraButton = Button(tab2, text="Mở camera", command=lambda: cameraCheck())
-    cameraButton.grid(row=4, sticky="ew", padx=(250,250), pady=10)
 
-    uploadButton = Button(tab2, text="Chọn tệp", command=lambda: load_file(checkButton))
-    uploadButton.grid(row=5, sticky="ew", padx=(250,250), pady=10)
+    label6 = Label(tab2, text="* Hướng dẫn: Để mã QR lên trước camera để kiểm tra *",fg='red', bg='#b172ec',font='bold')
+    label6.grid(row=2, pady=(20,0))
 
-    fileNameLabel.grid(row=6,pady=5)
-
-    checkButton = Button(tab2, text="Xác thực", state=DISABLED, command=lambda: check())
-    checkButton.grid(row=8, sticky="ew", padx=(250,250), pady=10)
+    cameraButton = Button(tab2, text="Mở camera", command=lambda: cameraCheck(),fg='blue', bg='#8cd56c',font= ('bold',20))
+    cameraButton.grid(row=4, sticky="ew", padx=(250,250), pady=200)
 
 
 if __name__ == "__main__":
     root = Tk()
     root.title("QR-PDF")
-    root.geometry("800x600")
+    root.geometry("800x780")
+
+    root.state("zoomed" )
 
     tabControl = ttk.Notebook(root)
 
@@ -136,10 +141,10 @@ if __name__ == "__main__":
     key2Label = Label(tab2, text="" )
     key3Label = Label(tab2, text="" )
 
-    tabControl.add(tab1, text="  Tạo QR-PDF ")
-    tabControl.add(tab2, text="  Xác thực ")
+    tabControl.add(tab1, text="  --- Tạo QR-PDF --- ")
+    tabControl.add(tab2, text="  --- Xác thực ---")
 
-    background_image = PhotoImage(file='./image/background/bg8.png')
+    background_image = PhotoImage(file='./image/background/bg11.png')
     bg1 = Label(tab1, image=background_image)
     bg1.place(x=0, y=0, relwidth=1, relheight=1)
     
@@ -149,8 +154,7 @@ if __name__ == "__main__":
     keyFileLabel = Label(tab1, text="" )
     fileNameLabel = Label(tab2, text="" )
     
-    sk=''
-    pk=''
+    choose=0
     
     addGenerateTab()
     addCheckTab()

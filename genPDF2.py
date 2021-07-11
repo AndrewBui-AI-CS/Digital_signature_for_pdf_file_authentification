@@ -47,15 +47,15 @@ class Generator(QRunnable):
         try:
             p = Canvas(self.data['fileName'])
             p.setPageSize((400, 400))
-
             content= self.data['content']
             #content sau nay phai ghep voi chu ky RSA
             #sk, pk = generateKey()
             sk=self.data['sk']
-            pk=self.data['pk']
+            author = self.data['customer']
             signature_bytes = sign_msg(bytes(content, 'utf-8'), sk)
             signature = binascii.hexlify(signature_bytes).decode('utf-8')
-            qr_data = content+'#'+signature
+
+            qr_data = content+'#'+signature+'#'+author
             # Generate qr code
             print(qr_data)
             qrw = QrCodeWidget(qr_data) 
@@ -67,29 +67,26 @@ class Generator(QRunnable):
             p.showPage()
             p.save()
 
-            # mo 1 cai pdf co san ra
             template = PdfReader(self.data['fileName'], decompress=False).pages[0]
             template_obj = pagexobj(template)
 
             canvas = Canvas(self.data['fileName'])
+
+            pdfmetrics.registerFont(TTFont('Verdana', 'Verdana.ttf'))
+            canvas.setFont("Verdana", 9)
 
             xobj_name = makerl(canvas, template_obj)
             canvas.doForm(xobj_name)
 
             # Date: Todays date
             today = datetime.today()
-            canvas.drawString(500, 15, today.strftime('%F'))
-
-
-            # Customer
-            #canvas.drawString(20, 800, self.data['customer'])
-
+            canvas.drawString(440, 15, today.strftime('%F')+ ' by '+ self.data['customer'])
 
             ystart = 750
 
             # Program Language
 
-            content = self.data['content'].split('\n')
+            content = self.data['words'].split('\n')
             print(content)
             ystart = 780
             for line in content:
@@ -107,4 +104,3 @@ class Generator(QRunnable):
             return
 
         self.signals.file_saved_as.emit(self.data['fileName'])
-        print('ok2')
