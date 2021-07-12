@@ -9,3 +9,4 @@ qrcode==6.1
 reportlab==3.5.67
 rsa==4.7.2
 six==1.16.0
+pycryptodome
