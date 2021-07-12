@@ -11,7 +11,7 @@ Hopefully, this demo app will satisfy our mentor and all of you, my visitors.
 # Create virtual environment and install dependencies
 Run the command below to create a virtual environment.
 ```ruby
-virtualenv myvenv
+virtualenv --python=/usr/bin/python3 myvenv
 ```
 
 Then activate the virtual environment.
