@@ -3,10 +3,10 @@ from PyQt5.QtCore import QObject, QRunnable, QThreadPool, pyqtSignal, pyqtSlot
 
 from reportlab.pdfgen.canvas import Canvas
 from reportlab.graphics.shapes import Drawing, Rect
-from reportlab.graphics.barcode.qr import QrCodeWidget 
+from reportlab.graphics.barcode.qr import QrCodeWidget
 from reportlab.graphics import renderPDF
 from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont  
+from reportlab.pdfbase.ttfonts import TTFont
 
 import os
 
@@ -45,12 +45,12 @@ class Generator(QRunnable):
 
     def gen(self):
         try:
-            p = Canvas(self.data['fileName'])
+            p = Canvas('data/pdf_file/' + self.data['fileName'])
             p.setPageSize((400, 400))
-            content= self.data['content']
-            #content sau nay phai ghep voi chu ky RSA
+            content = self.data['content']
+            # content sau nay phai ghep voi chu ky RSA
             #sk, pk = generateKey()
-            sk=self.data['sk']
+            sk = self.data['sk']
             author = self.data['customer']
             signature_bytes = sign_msg(bytes(content, 'utf-8'), sk)
             signature = binascii.hexlify(signature_bytes).decode('utf-8')
@@ -58,19 +58,20 @@ class Generator(QRunnable):
             qr_data = content+'#'+signature+'#'+author
             # Generate qr code
             print(qr_data)
-            qrw = QrCodeWidget(qr_data) 
+            qrw = QrCodeWidget(qr_data)
 
-            d = Drawing(10,10) 
+            d = Drawing(10, 10)
             d.add(qrw)
 
             renderPDF.draw(d, p, 0, 0)
             p.showPage()
             p.save()
 
-            template = PdfReader(self.data['fileName'], decompress=False).pages[0]
+            template = PdfReader('data/pdf_file/' +
+                                 self.data['fileName'], decompress=False).pages[0]
             template_obj = pagexobj(template)
 
-            canvas = Canvas(self.data['fileName'])
+            canvas = Canvas('data/pdf_file/' + self.data['fileName'])
 
             pdfmetrics.registerFont(TTFont('Verdana', 'Verdana.ttf'))
             canvas.setFont("Verdana", 9)
@@ -80,7 +81,8 @@ class Generator(QRunnable):
 
             # Date: Todays date
             today = datetime.today()
-            canvas.drawString(440, 15, today.strftime('%F')+ ' by '+ self.data['customer'])
+            canvas.drawString(440, 15, today.strftime(
+                '%F') + ' by ' + self.data['customer'])
 
             ystart = 750
 
@@ -91,11 +93,11 @@ class Generator(QRunnable):
             ystart = 780
             for line in content:
                 if line:
-                    lines = textwrap.wrap(line, width=88) # 45
+                    lines = textwrap.wrap(line, width=88)  # 45
                     for n, l in enumerate(lines, 0):
                         ystart = ystart - 28
                         canvas.drawString(75, ystart, l)
-                ystart = ystart -28
+                ystart = ystart - 28
             canvas.save()
 
         except Exception as e:
@@ -103,4 +105,5 @@ class Generator(QRunnable):
             print(str(e))
             return
 
-        self.signals.file_saved_as.emit(self.data['fileName'])
+        self.signals.file_saved_as.emit(
+            'data/pdf_file/' + self.data['fileName'])
