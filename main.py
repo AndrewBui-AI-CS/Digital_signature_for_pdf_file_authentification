@@ -70,7 +70,7 @@ def addGenerateTab():
     label4 = Label(tab1, text="Viết dữ liệu cần ký",fg='#ff0', bg='#a053e7',font='bold')
     label4.grid(row=9, pady=(20,0),padx=(0,1200))
 
-    textBox2 = Text(tab1, height=10, width=20)
+    textBox2 = Text(tab1, height=5, width=20)
     textBox2.grid(row=8, columnspan=3, sticky="ew", pady=5, padx=(50,50))
 
     encodeButton = Button(tab1, text="Tạo PDF", command=lambda: genPDF(str(textBox.get("1.0", END)),str(textBox2.get("1.0", END)), str(author.get()),str(fileName.get())),fg='blue', bg='#8cd56c',font= ('bold',20))
