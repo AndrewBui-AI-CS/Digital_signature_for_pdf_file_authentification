@@ -18,6 +18,7 @@ from pdfrw.buildxobj import pagexobj
 from pdfrw.toreportlab import makerl
 
 from sign import *
+from genQR import *
 
 
 class WorkerSignals(QObject):
@@ -59,6 +60,9 @@ class Generator(QRunnable):
             # Generate qr code
             print(qr_data)
             qrw = QrCodeWidget(qr_data)
+
+            genQR(qr_data, 'data/Qr_image/' +
+                  self.data['fileName'][0:-4] + '.png')
 
             d = Drawing(10, 10)
             d.add(qrw)

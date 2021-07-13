@@ -44,6 +44,10 @@ def generateCamera():
                         0.9, myColor, 2)
 
         cv2.imshow('Result', img)
-        cv2.waitKey(1)
+        key = cv2.waitKey(1) & 0xFF
 
+        if key == ord("q"):
+            break
+
+    cv2.destroyAllWindows()
 # generateCamera()

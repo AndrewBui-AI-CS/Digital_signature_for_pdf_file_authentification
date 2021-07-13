@@ -136,6 +136,9 @@ def addCheckTab():
     label6 = Label(tab2, text="* Hướng dẫn: Để mã QR lên trước camera để kiểm tra *",
                    fg='red', bg='#b172ec', font='bold')
     label6.grid(row=2, pady=(20, 0))
+    label7 = Label(tab2, text="* Nhấn phím 'q' để tắt camera *",
+                   fg='red', bg='#b172ec', font='bold')
+    label7.grid(row=3, pady=(20, 0))
 
     cameraButton = Button(tab2, text="Mở camera", command=lambda: cameraCheck(
     ), fg='blue', bg='#8cd56c', font=('bold', 20))
