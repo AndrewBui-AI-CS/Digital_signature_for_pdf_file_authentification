@@ -17,8 +17,8 @@ from pdfrw import PdfReader
 from pdfrw.buildxobj import pagexobj
 from pdfrw.toreportlab import makerl
 
-from sign import *
-from genQR import *
+from src.sign import *
+from src.genQR import *
 
 
 class WorkerSignals(QObject):

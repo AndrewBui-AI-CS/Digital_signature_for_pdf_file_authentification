@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from pyzbar.pyzbar import decode
 
-from sign import *
+from src.sign import *
 
 
 def generateCamera():

@@ -4,12 +4,12 @@ from tkinter import ttk
 from tkinter import filedialog
 from tkinter import messagebox
 
-from genPDF2 import *
-from sign import *
+from src.genPDF2 import *
+from src.sign import *
 
 # from genPDF import Window
 import json
-from QrScan import generateCamera
+from src.QrScan import generateCamera
 
 
 def genPDF(textBox, words, author, fileName):
