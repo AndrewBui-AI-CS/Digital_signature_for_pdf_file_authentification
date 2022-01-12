@@ -1,4 +1,4 @@
-# DS_for_pdf_file_authentification
+# Digital signature for pdf file authentification 
 In this project, we built an application based mainly on some cryptopagraphic algorithms that we have learnt from school.
 Hopefully, this demo app will satisfy our mentor and all of you, our visitors.
 
@@ -35,7 +35,7 @@ All these data were saved under data folder
 
 ## Usage
 ```ruby
-python main.py
+python src/main.py
 ```
 Fill in all fields required
 
